@@ -80,7 +80,13 @@ std::string Compiler::create_data(const std::vector<std::string>& config, const 
   }
 
   for (auto v : encoded_headers) {
-    if (v.size() != header_length) { throw std::invalid_argument("Error: badly encoded transition function"); }
+    if (v.size() != header_length) {
+      std::string
+      e1 = "Error: badly encoded transition function.\nCorrect encoding: ",
+      e2 = "[state] : [state if 0] [symbol if 0 (0/1)] [direction if 0 (L/R)] ",
+      e3 = "[state if 1] [symbol if 1 (0/1)] [direction if 1 (L/R)]";
+      throw std::invalid_argument(e1 + e2 + e3);
+    }
   }
   current = "0" + state_to_bin(index(states, transitions[2])) + transitions[3]
     + std::to_string(index({"L", "R"}, transitions[4]));

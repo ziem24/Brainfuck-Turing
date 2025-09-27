@@ -8,5 +8,6 @@ int main(int argc, char* argv[]) {
   Compiler c(argv[1]);
   std::vector<std::string> res = c.compile_all();
   c.save_to_file(res);
+  std::cout << "Done" << std::endl;
   return 0;
 }
