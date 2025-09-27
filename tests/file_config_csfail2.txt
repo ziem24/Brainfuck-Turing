@@ -1,0 +1,6 @@
+.section CONFIG
+    FILE        file.bf
+    HEADPOS     -25
+
+.section TRANSITIONS
+    INIT : HALT 0 L HALT 0 L

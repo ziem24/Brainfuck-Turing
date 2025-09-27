@@ -1,0 +1,13 @@
+.section CONFIG
+    FILE        file.bf
+    HEADPOS     25
+
+.section TRANSITIONS
+    /*
+    This is a multiline comment.
+    Nothing in here will affect the configuration.
+    */
+    st_A : st_B 1 R st_B 1 L
+    st_B : st_A 1 L st_C 0 L
+    st_C : HALT 1 R st_D 1 L
+    st_D : st_D 1 R st_A 0 R

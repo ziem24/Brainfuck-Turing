@@ -1,5 +1,6 @@
 .vscode
+build
+mystuff
 *.o
-*.bf
-*.tbf
+Makefile
 main

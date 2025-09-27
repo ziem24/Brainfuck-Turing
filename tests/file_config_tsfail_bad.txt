@@ -1,0 +1,6 @@
+.section CONFIG
+    FILE        file.bf
+    HEADPOS     25
+
+.section TRANSITIONS
+    RAWR : O W O U W U

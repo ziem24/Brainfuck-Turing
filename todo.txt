@@ -1,5 +1,0 @@
-- unit tests
-- some interpreter/visualizer for this thing
-- CMake config
-- better README
-- better docstrings

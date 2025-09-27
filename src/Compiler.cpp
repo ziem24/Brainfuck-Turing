@@ -1,10 +1,10 @@
 #include "Compiler.hpp"
 
 Compiler::Compiler(const std::string& filename) {
-  std::vector<std::string> data = read_from_file(filename);
+  std::vector<std::string> data = read_from_file("../" + filename);
   std::vector<std::string> config = read_section(data, "CONFIG");
   std::vector<std::string> transitions = read_section(data, "TRANSITIONS");
-  header_space = create_data(config, transitions);
+  create_data(config, transitions);
 }
 
 std::vector<std::string> Compiler::read_from_file(const std::string& filename) const {
@@ -44,12 +44,18 @@ std::vector<std::string> Compiler::read_section(const std::vector<std::string>& 
   return section;
 }
 
-std::string Compiler::create_data(const std::vector<std::string>& config, const std::vector<std::string>& transitions) {
+void Compiler::create_data(const std::vector<std::string>& config, const std::vector<std::string>& transitions) {
   std::vector<std::string> states, encoded_headers;
-  std::string header_space, current;
+  std::string headers, current;
+
+  if (config.empty() || transitions.empty()) {
+    throw std::invalid_argument("Empty sections!!!");
+  }
+
+  if (transitions.size() % 8) { throw std::invalid_argument("Error: transition section incomplete"); }
 
   for (int i = 0; i < config.size() - 1; i++) {
-    if (config[i] == "FILE") { outfile = config[i + 1]; }
+    if (config[i] == "FILE") { outfile = "../" + config[i + 1]; }
     else if (config[i] == "HEADPOS") { headpos = std::stoi(config[i + 1]); }
   }
   if (outfile.empty() || headpos <= 0) { throw std::invalid_argument("Incorrect FILE or HEADPOS definition in the CONFIG section."); }
@@ -90,15 +96,12 @@ std::string Compiler::create_data(const std::vector<std::string>& config, const 
   }
   current = "0" + state_to_bin(index(states, transitions[2])) + transitions[3]
     + std::to_string(index({"L", "R"}, transitions[4]));
-  for (const std::string& s : encoded_headers) { header_space = s + header_space; }
+  for (const std::string& s : encoded_headers) { headers = s + headers; }
 
-  return header_space + current;
+  header_space = headers + current;
 }
 
-std::string Compiler::_msg(const std::string& message, bool newlines) const {
-  if (newlines) { return "\n   // " + message + "\n"; }
-  else { return "    // " + message; }
-}
+std::string Compiler::comment(const std::string& message) const { return "    // " + message; }
 
 // BRAINFUCK INSTRUCTION SEQUENCES
 
@@ -106,25 +109,25 @@ std::vector<std::string> Compiler::compile_all() const {
   // Dependencies: mul, INITIALIZE_HEADERS, SET_Q, SET_S, MOVE_HEAD, LOAD_HEADER, STORE_HEADER
   std::vector<std::string> instructions = {
     "========== TURING_MAIN ==========\n",
-    _msg("INITIALIZE_HEADERS"),
+    comment("INITIALIZE_HEADERS"),
     INITIALIZE_HEADERS(),
-    _msg("INITIALIZE_TAPE"),
+    comment("INITIALIZE_TAPE"),
     mul(">>+", headpos),
     mul("<", headpos * 2 + state_length + 2),
     "[-<",
-    _msg("SET_Q; SET_S; MOVE_HEAD"),
+    comment("SET_Q; SET_S; MOVE_HEAD"),
     SET_Q(),
     SET_S(),
     MOVE_HEAD(),
-    _msg("LOAD_HEADER"),
+    comment("LOAD_HEADER"),
     LOAD_HEADER(),
-    _msg("STORE_HEADER"),
+    comment("STORE_HEADER"),
     STORE_HEADER(),
-    _msg("Next loop"),
+    comment("Next loop"),
     GOTO_T(),
     "[-" + mul(">", header_length) + "]",
     ">]",
-    _msg("Post halt handling"),
+    comment("Post halt handling"),
     mul(">",state_length),
     SET_S(),
     MOVE_HEAD()

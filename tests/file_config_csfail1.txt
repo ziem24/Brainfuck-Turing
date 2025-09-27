@@ -1,0 +1,6 @@
+.section CONFIG
+    Piss
+
+
+.section TRANSITIONS
+    INIT : HALT 0 L HALT 0 L

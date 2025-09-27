@@ -1,0 +1,7 @@
+.section CONFIG
+    FILE        file.bf
+    HEADPOS     25
+
+.section TRANSITIONS
+    st_A : st_B 1 R st_B 1 L
+    st_A : st_A 1 L st_C 0 L

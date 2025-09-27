@@ -1,4 +1,4 @@
-#include "Compiler.hpp"
+#include "src/Compiler.hpp"
 
 int main(int argc, char* argv[]) {
   if (argc != 2) {
